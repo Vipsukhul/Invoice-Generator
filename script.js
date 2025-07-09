@@ -125,40 +125,54 @@ document.addEventListener('DOMContentLoaded', function() {
         window.print();
     }
     
-    function saveInvoice() {
-        calculateTotals();
-        
-        const invoiceData = {
-            invoiceNo: document.getElementById('invoiceNo').value,
-            date: document.getElementById('invoiceDate').textContent,
-            customerTitle: document.getElementById('customerTitle').value,
-            customerName: document.getElementById('customerName').value,
-            customerAddress: document.getElementById('customerAddress').value,
-            customerMobile: document.getElementById('customerMobile').value,
-            items: [],
-            subtotal: document.getElementById('subtotal').textContent,
-            gst: document.getElementById('gst').textContent,
-            discount: document.getElementById('discount').value,
-            grandTotal: document.getElementById('grandTotal').textContent,
-            amountWords: document.getElementById('amountWords').value
-        };
-        
-        const rows = itemsTable.querySelectorAll('tr');
-        rows.forEach(row => {
-            invoiceData.items.push({
-                description: row.querySelector('td:nth-child(2) input').value,
-                qty: row.querySelector('.qty').value,
-                rate: row.querySelector('.rate').value,
-                total: row.querySelector('.total').textContent
-            });
+  // Add this to your existing script.js
+async function saveInvoice() {
+    calculateTotals();
+    
+    const invoiceData = {
+        invoiceNo: document.getElementById('invoiceNo').value,
+        date: document.getElementById('invoiceDate').textContent,
+        customerTitle: document.getElementById('customerTitle').value,
+        customerName: document.getElementById('customerName').value,
+        customerAddress: document.getElementById('customerAddress').value,
+        customerMobile: document.getElementById('customerMobile').value,
+        items: [],
+        subtotal: document.getElementById('subtotal').textContent,
+        gst: document.getElementById('gst').textContent,
+        discount: document.getElementById('discount').value,
+        grandTotal: document.getElementById('grandTotal').textContent,
+        amountWords: document.getElementById('amountWords').value
+    };
+    
+    const rows = itemsTable.querySelectorAll('tr');
+    rows.forEach(row => {
+        invoiceData.items.push({
+            description: row.querySelector('td:nth-child(2) input').value,
+            qty: row.querySelector('.qty').value,
+            rate: row.querySelector('.rate').value,
+            total: row.querySelector('.total').textContent
+        });
+    });
+    
+    try {
+        const response = await fetch('save_invoice.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(invoiceData)
         });
         
-        // In a real application, you would save to a database or localStorage
-        // For now, we'll just log it and show an alert
-        console.log('Invoice data:', invoiceData);
-        alert('Invoice saved! (Check console for data)');
+        const result = await response.json();
         
-        // Here you could also implement saving to localStorage or sending to a server
-        // localStorage.setItem('lastInvoice', JSON.stringify(invoiceData));
+        if (result.success) {
+            alert(`Invoice saved successfully! Invoice ID: ${result.invoice_id}`);
+            // Optionally redirect or clear form
+        } else {
+            alert(`Error saving invoice: ${result.message}`);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to save invoice. Please check console for details.');
     }
-});
+}
