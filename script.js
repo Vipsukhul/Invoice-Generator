@@ -33,6 +33,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // Update discount value when changed
+    document.getElementById('discount').addEventListener('input', calculateTotals);
+    
     // Initialize calculations
     calculateTotals();
     
@@ -104,20 +107,29 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function numberToWords(num) {
-        // Simplified number to words conversion
-        // For a complete solution, consider using a library
         const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
         const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
         const tens = ['', 'Ten', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
         
         num = Math.floor(num);
-        
         if (num === 0) return 'Zero';
-        if (num < 10) return ones[num];
-        if (num < 20) return teens[num - 10];
-        if (num < 100) return tens[Math.floor(num / 10)] + (num % 10 !== 0 ? ' ' + ones[num % 10] : '');
         
-        return 'Amount in words';
+        function convertLessThanOneThousand(num) {
+            if (num === 0) return '';
+            if (num < 10) return ones[num];
+            if (num < 20) return teens[num - 10];
+            if (num < 100) {
+                return tens[Math.floor(num / 10)] + (num % 10 !== 0 ? ' ' + ones[num % 10] : '');
+            }
+            return ones[Math.floor(num / 100)] + ' Hundred' + (num % 100 !== 0 ? ' and ' + convertLessThanOneThousand(num % 100) : '');
+        }
+        
+        if (num < 1000) {
+            return convertLessThanOneThousand(num);
+        }
+        
+        // For larger numbers, you can extend this function
+        return 'Rupees ' + convertLessThanOneThousand(num);
     }
     
     function printInvoice() {
@@ -125,54 +137,54 @@ document.addEventListener('DOMContentLoaded', function() {
         window.print();
     }
     
-  // Add this to your existing script.js
-async function saveInvoice() {
-    calculateTotals();
-    
-    const invoiceData = {
-        invoiceNo: document.getElementById('invoiceNo').value,
-        date: document.getElementById('invoiceDate').textContent,
-        customerTitle: document.getElementById('customerTitle').value,
-        customerName: document.getElementById('customerName').value,
-        customerAddress: document.getElementById('customerAddress').value,
-        customerMobile: document.getElementById('customerMobile').value,
-        items: [],
-        subtotal: document.getElementById('subtotal').textContent,
-        gst: document.getElementById('gst').textContent,
-        discount: document.getElementById('discount').value,
-        grandTotal: document.getElementById('grandTotal').textContent,
-        amountWords: document.getElementById('amountWords').value
-    };
-    
-    const rows = itemsTable.querySelectorAll('tr');
-    rows.forEach(row => {
-        invoiceData.items.push({
-            description: row.querySelector('td:nth-child(2) input').value,
-            qty: row.querySelector('.qty').value,
-            rate: row.querySelector('.rate').value,
-            total: row.querySelector('.total').textContent
-        });
-    });
-    
-    try {
-        const response = await fetch('save_invoice.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(invoiceData)
+    async function saveInvoice() {
+        calculateTotals();
+        
+        const invoiceData = {
+            invoiceNo: document.getElementById('invoiceNo').value,
+            date: document.getElementById('invoiceDate').textContent,
+            customerTitle: document.getElementById('customerTitle').value,
+            customerName: document.getElementById('customerName').value,
+            customerAddress: document.getElementById('customerAddress').value,
+            customerMobile: document.getElementById('customerMobile').value,
+            items: [],
+            subtotal: document.getElementById('subtotal').textContent,
+            gst: document.getElementById('gst').textContent,
+            discount: document.getElementById('discount').value,
+            grandTotal: document.getElementById('grandTotal').textContent,
+            amountWords: document.getElementById('amountWords').value
+        };
+        
+        const rows = itemsTable.querySelectorAll('tr');
+        rows.forEach(row => {
+            invoiceData.items.push({
+                description: row.querySelector('td:nth-child(2) input').value,
+                qty: row.querySelector('.qty').value,
+                rate: row.querySelector('.rate').value,
+                total: row.querySelector('.total').textContent
+            });
         });
         
-        const result = await response.json();
-        
-        if (result.success) {
-            alert(`Invoice saved successfully! Invoice ID: ${result.invoice_id}`);
-            // Optionally redirect or clear form
-        } else {
-            alert(`Error saving invoice: ${result.message}`);
+        try {
+            const response = await fetch('save_invoice.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(invoiceData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert(`Invoice saved successfully! Invoice ID: ${result.invoice_id}`);
+                // Optionally redirect or clear form
+            } else {
+                alert(`Error saving invoice: ${result.message}`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to save invoice. Please check console for details.');
         }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to save invoice. Please check console for details.');
     }
-}
+});
