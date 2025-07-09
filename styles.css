@@ -1,0 +1,211 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.container {
+    background-color: white;
+    padding: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.invoice-header h2 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.invoice-meta {
+    text-align: right;
+}
+
+.invoice-meta span {
+    font-weight: bold;
+}
+
+.customer-info {
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.form-group label {
+    width: 150px;
+    font-weight: bold;
+}
+
+.input-group {
+    display: flex;
+    flex: 1;
+}
+
+.input-group select {
+    margin-right: 10px;
+    padding: 5px;
+}
+
+input[type="text"],
+input[type="number"] {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex: 1;
+}
+
+.invoice-items {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.invoice-items th,
+.invoice-items td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.invoice-items th {
+    background-color: #f2f2f2;
+}
+
+.invoice-items input {
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    background: transparent;
+}
+
+.remove-btn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn {
+    padding: 10px 15px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.btn.primary {
+    background: #2ecc71;
+}
+
+.invoice-summary {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.amount-words {
+    flex: 2;
+}
+
+.amount-words input {
+    width: 100%;
+    font-style: italic;
+}
+
+.totals {
+    flex: 1;
+    max-width: 300px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.total-row span:first-child {
+    font-weight: bold;
+}
+
+.grand-total {
+    font-weight: bold;
+    font-size: 1.1em;
+    border-top: 2px solid #333;
+    margin-top: 5px;
+    padding-top: 10px;
+}
+
+.actions {
+    margin: 30px 0;
+    text-align: center;
+}
+
+.signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+
+@media print {
+    body {
+        background-color: white;
+        padding: 0;
+    }
+    
+    .container {
+        box-shadow: none;
+        padding: 0;
+    }
+    
+    .remove-btn, #addItemBtn, .actions {
+        display: none;
+    }
+    
+    input {
+        border: none !important;
+        background: transparent !important;
+    }
+    
+    select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        border: none;
+        background: transparent;
+    }
+}
